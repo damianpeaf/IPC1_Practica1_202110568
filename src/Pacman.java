@@ -45,7 +45,7 @@ public class Pacman {
                     nombreUsuario();
                     break;
                 case 2:
-                    System.out.println("LISTADO");
+                    historialPartidas();
                     break;
                 case 3:
                     System.out.println("Hasta pronto");
@@ -61,6 +61,9 @@ public class Pacman {
         }
     }
 
+    private static void historialPartidas(){
+
+    }
 
     private static void nombreUsuario(){
         try{
@@ -301,7 +304,6 @@ public class Pacman {
             posicionIncial();
         }
 
-
     }
 
 
@@ -325,6 +327,9 @@ public class Pacman {
                         break;
                     case "4":
                         mover("izquierda");
+                        break;
+                    case "f":
+                        menuPausa();
                         break;
                     case "F":
                         menuPausa();
@@ -367,10 +372,36 @@ public class Pacman {
     }
 
     private static void menuPausa() {
+        try {
+            System.out.println("=== Menu de Pausa ===");
+            System.out.println("1. Regresar");
+            System.out.println("2. Ver historial de partidas");
+            System.out.println("3. Terminar partida");
+            switch (entrada.nextInt()) {
+                case 1:
+                    decisionMovimiento();
+                    break;
+                case 2:
+                    historialPartidas();
+                    break;
+                case 3:
+                    partidaTerminada=true;
+                    decisionMovimiento();
+                    break;
+                default:
+                    menuPausa();
+                    break;
+            }
+
+        } catch (InputMismatchException exception) {
+            System.out.println("Ingresa un valor valido");
+            entrada.nextLine();
+            decisionMovimiento();
+        }
     }
 
     private static void imprimirMenuMovimiento(){
-        System.out.println("| Arriba: 8 | Abajo: 5 | Derecha: 6 | Izquierda: 4 | Menu pausa: F |");
+        System.out.println("| Arriba: 8 | Abajo: 5 | Derecha: 6 | Izquierda: 4 | Menu pausa: f |");
     }
 
 
