@@ -6,31 +6,47 @@ import java.util.Scanner;
 
 public class Pacman {
 
+    //leer las entradas del usuario durante toda la ejucion
     private static Scanner entrada = new Scanner(System.in);
-    private static String nombreUsuario = "";
+
+    //objeto para generar numeros aleatorios
+    private static Random posicionesAleatorias = new Random();
+
+    //tablero y posicion de pacman
     private static String[][] tablero;
+    private static int posYPacman, posXPacman;
+
+    //datos de la partida
     private static int cantidadPremios = 40;
     private static int cantidadParedes = 20;
     private static int cantidadTrampas = 20;
+    private static boolean partidaTerminada;
+    private static int elementosMaximos = 0;
+    private static int elementosRecogidos = 0;
+
+    //datos del usuario
+    private static String nombreUsuario = "";
     private static int puntaje = 0;
     private static  int vidas = 3;
-    private static Random posicionesAleatorias = new Random();
 
+    //Simbolos de los items
     private final static String FANTASMA = "@";
     private final static String PREMIOSIMPLE = "0";
     private final static String PREMIOESPECIAL = "$";
     private final static String PARED = "X";
     private final static String PACMAN = "<";
-    private static int posYPacman, posXPacman;
 
-    private static boolean partidaTerminada;
-    private static int elementosMaximos = 0;
-    private static int elementosRecogidos = 0;
+
+    //variables ansi de escape (para colores)
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_RESET = "\u001B[0m";
 
     public static void main(String[] args) {
         menuInicio();
     }
-
 
     private static void menuInicio(){
         try{
@@ -177,6 +193,12 @@ public class Pacman {
 
     private static  void generarTablero(){
 
+        //renicia las variables por si hubo una partida antes
+        elementosRecogidos=0;
+        puntaje=0;
+        vidas=3;
+
+        //genera los items/elementos del tablero
         generarElemento(cantidadPremios, PREMIOSIMPLE, PREMIOESPECIAL);
         generarElemento(cantidadParedes, PARED, null);
         generarElemento(cantidadTrampas, FANTASMA, null);
@@ -184,27 +206,32 @@ public class Pacman {
     }
 
     private static void generarElemento(int cantidadElementos, String simboloPrincipal, String simboloEspecial){
+
+        //total de casillas en el tablero
         int casillas = tablero.length*tablero[0].length;
 
+        //Simbolo que se mostrara en el tablero
         String simbolo;
 
-        //Para generar por lo menos un elemento
+        //Para generar por lo menos un elemento o el porcentaje indicado al principio
         int elementosRepresentados = 1;
         int posiblesElementos = Math.round(casillas*cantidadElementos/100);
         if (posiblesElementos>1) {
             elementosRepresentados = posiblesElementos;
         }
 
-        //para pruebas
+        //para pruebas de movimiento
         //int elementosRepresentados = 0;
 
 
         System.out.println("Cantidad de " + simboloPrincipal + " generados = " + elementosRepresentados);
 
+        //define la cantidad de premios maximos que recoger (para saber si ganó)
         if (simboloPrincipal.equals(PREMIOSIMPLE)) {
             elementosMaximos = elementosRepresentados;
         }
 
+        //genera n elementos
         for (int i = 0; i < elementosRepresentados; i++) {
             boolean creado = false;
 
@@ -212,6 +239,7 @@ public class Pacman {
             if (simboloEspecial == null) {
                 simbolo = simboloPrincipal;
             }else{
+                //si hay 2 (premios) genera uno especial o simple de manera aleatoria
                 if (posicionesAleatorias.nextInt(3)==0) {
                     simbolo = simboloEspecial;
                 }else {
@@ -219,7 +247,7 @@ public class Pacman {
                 }
             }
 
-            //Genera posiciones hasta que logra insertar el simbolo en alguna
+            //Genera posiciones en el tablero HASTA que logra insertar el simbolo en alguna
             while (!creado){
 
                 int posY = posicionesAleatorias.nextInt(tablero.length);
@@ -236,6 +264,7 @@ public class Pacman {
 
     private static void imprimirTablero(){
 
+        //Encabezado (numero para las columnas)
         String encabezado = "";
 
         for (int j=0; j<tablero[0].length; j++) {
@@ -245,8 +274,8 @@ public class Pacman {
         System.out.println("---"+encabezado+"---");
 
         for (int i=0; i<tablero.length; i++){
-
-            if (i==9){
+            //Si se escoge el tablero grande (10 filas) quita un espacio para cuadrar la ultima fila
+            if (i>=9){
                 System.out.print((i+1) + "|");
 
             }else{
@@ -255,17 +284,35 @@ public class Pacman {
 
             for (int j=0; j<tablero[0].length; j++){
 
+                //verifica que esta almacenado en el tablero
                 String caracter = tablero[i][j];
 
                 if (caracter!=null){
-                    System.out.print(" " + caracter + " ");
+                    String color = "";
+
+                    //cambiar color de los elementos
+                    if (tablero[i][j].equals(FANTASMA)) {
+                        color = ANSI_RED;
+                    }else if (tablero[i][j].equals(PREMIOSIMPLE) || tablero[i][j].equals(PREMIOESPECIAL)){
+                        color = ANSI_GREEN;
+                    }else if (tablero[i][j].equals(PARED)) {
+                        color = ANSI_BLUE;
+                    }else if (tablero[i][j].equals(PACMAN)) {
+                        color = ANSI_YELLOW;
+                    }
+
+                    //imprime el elemento
+                    System.out.print( color +" " + caracter + " "+ ANSI_RESET);
                 }else{
+                    //si no hay nada coloca un espacio en blanco
                     System.out.print("   ");
                 }
 
             }
             System.out.println("|");
         }
+
+        //ciera el tablero
 
         String pie = "";
 
@@ -274,6 +321,7 @@ public class Pacman {
         }
         System.out.println("---"+pie+"---");
 
+        //muestra los datos de la partida
         System.out.println("| Nombre usuario: " +nombreUsuario + " | Puntos: " + puntaje + " | Vidas: "+ vidas+ " |");
 
     }
@@ -289,6 +337,7 @@ public class Pacman {
             System.out.println("Columna: ");
             int posX = entrada.nextInt() -1;
 
+            //siempre que no haya nada en el donde se vaya a insertar a pacman
             if (tablero[posY][posX] == null) {
                 tablero[posY][posX]=PACMAN;
                 posXPacman=posX;
@@ -309,6 +358,7 @@ public class Pacman {
 
     private static void decisionMovimiento(){
 
+        //3 condiciones para dar por finalizada una partida
         if (vidas != 0 && !partidaTerminada && elementosRecogidos<elementosMaximos) {
 
             imprimirTablero();
@@ -362,6 +412,7 @@ public class Pacman {
                 razon = "VICTORIA";
             }
 
+            //Para guardar en el registro general
             String registroIndividual = nombreUsuario + " | " + puntaje + " | "+ razon + "\n";
 
             System.out.println(registroIndividual);
@@ -407,12 +458,15 @@ public class Pacman {
 
     private static void mover(String tipoMovimiento){
 
+        //guarda la posicion anterior de pacman
         int posXPacmanAntigua = posXPacman;
         int posYPacmanAntigua = posYPacman;
 
+        //borra al pacman de su posicion inicial
 
         tablero[posYPacman][posXPacman] = null;
-        //desplazamiento horizontal
+
+        //Para desplazamiento horizontal
         if (tipoMovimiento.equals("derecha")) {
             posXPacman+=1;
         }
@@ -421,7 +475,7 @@ public class Pacman {
         }
 
 
-        //desplazamiento vertical
+        //Para desplazamiento vertical
         if (tipoMovimiento.equals("arriba")) {
             posYPacman-=1;
         }
@@ -429,7 +483,8 @@ public class Pacman {
             posYPacman+=1;
         }
 
-        //validacion reapacer por otro lado
+        //validacion para reapacer por otro lado
+        //vertical
         if (posYPacman >= tablero.length) {
             posYPacman=0;
         }
@@ -437,6 +492,7 @@ public class Pacman {
             posYPacman=tablero.length-1;
         }
 
+        //horizontal
         if (posXPacman >= tablero[0].length) {
             posXPacman=0;
         }
@@ -481,7 +537,7 @@ public class Pacman {
             }
 
         }else{
-            //simplemente mueve al personaje (ya que no hay problema)
+            //simplemente mueve al personaje (ya que no hay nada en esa casilla)
 
             tablero[posYPacman][posXPacman] = PACMAN;
         }
@@ -489,7 +545,5 @@ public class Pacman {
         //regresar a decidir
         decisionMovimiento();
     }
-
-
 
 }
