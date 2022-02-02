@@ -36,13 +36,22 @@ public class Pacman {
     private final static String PARED = "X";
     private final static String PACMAN = "<";
 
+    //Historial de partidas
+    private static String registroGeneral= "";
 
-    //variables ansi de escape (para colores)
+    /*
+    //variables ansi de escape (para colores) -> no sirve en CMD
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_YELLOW = "\u001B[33m";
     public static final String ANSI_BLUE = "\u001B[34m";
     public static final String ANSI_RESET = "\u001B[0m";
+    */
+    public static final String ANSI_RED = "";
+    public static final String ANSI_GREEN = "";
+    public static final String ANSI_YELLOW = "";
+    public static final String ANSI_BLUE = "";
+    public static final String ANSI_RESET = "";
 
     public static void main(String[] args) {
         menuInicio();
@@ -78,7 +87,38 @@ public class Pacman {
     }
 
     private static void historialPartidas(){
+        //crear arreglo para manejar el registro
 
+        if (!registroGeneral.isEmpty()){
+            String[] datosPartidas = registroGeneral.split(" | ");
+
+            int ContadorAux = 1;
+
+            System.out.println(ANSI_RED+"No. - "+ANSI_BLUE+"Usuario - " + ANSI_RED+"Punteo - " + ANSI_YELLOW+"Estado");
+
+            for (int i = 0; i < datosPartidas.length; i+=6) {
+                System.out.println(ANSI_RED+ ContadorAux+" - "+ANSI_BLUE+ datosPartidas[i] + " - " + ANSI_RED+ datosPartidas[i+2]+" - " + ANSI_YELLOW+datosPartidas[i+4] + ANSI_RESET);
+                ContadorAux++;
+            }
+        }else{
+            System.out.println("No hay registros");
+        }
+
+        boolean volverAlMenu = false;
+
+        entrada.nextLine();
+        String texto = entrada.nextLine();
+
+        if (texto.isEmpty()) {
+            volverAlMenu = true;
+            System.out.println(texto);
+        }
+
+        if (volverAlMenu) {
+            menuInicio();
+        }else{
+            historialPartidas();
+        }
     }
 
     private static void nombreUsuario(){
@@ -123,11 +163,11 @@ public class Pacman {
 
     private static void cantidadPremios(){
         try {
-            System.out.println("¿Cantidad de premios? [0-40]");
+            System.out.println("¿Cantidad de premios? [1-40]");
 
             cantidadPremios = entrada.nextInt();
 
-            if (cantidadPremios > 40) {
+            if (cantidadPremios > 40 || cantidadPremios<1) {
                 cantidadPremios();
             } else {
                 cantidadParedes();
@@ -142,10 +182,10 @@ public class Pacman {
 
     private static void cantidadParedes(){
         try {
-            System.out.println("¿Cantidad de paredes? [0-20]");
+            System.out.println("¿Cantidad de paredes? [1-20]");
             cantidadParedes = entrada.nextInt();
 
-            if (cantidadParedes>20){
+            if (cantidadParedes>20 || cantidadParedes<1){
                 cantidadParedes();
 
             }else{
@@ -161,10 +201,10 @@ public class Pacman {
 
     private static void cantidadTrampas(){
         try {
-            System.out.println("¿Cantidad de trampas? [0-20]");
+            System.out.println("¿Cantidad de trampas? [1-20]");
             cantidadTrampas = entrada.nextInt();
 
-            if (cantidadTrampas>20){
+            if (cantidadTrampas>20 || cantidadTrampas<1){
                 cantidadTrampas();
             }else {
 
@@ -413,9 +453,11 @@ public class Pacman {
             }
 
             //Para guardar en el registro general
-            String registroIndividual = nombreUsuario + " | " + puntaje + " | "+ razon + "\n";
+            String registroIndividual = nombreUsuario + " | " + puntaje + " | "+ razon + " | ";
 
             System.out.println(registroIndividual);
+
+            registroGeneral = registroIndividual + registroGeneral;
 
             menuInicio();
         }
@@ -426,14 +468,10 @@ public class Pacman {
         try {
             System.out.println("=== Menu de Pausa ===");
             System.out.println("1. Regresar");
-            System.out.println("2. Ver historial de partidas");
             System.out.println("3. Terminar partida");
             switch (entrada.nextInt()) {
                 case 1:
                     decisionMovimiento();
-                    break;
-                case 2:
-                    historialPartidas();
                     break;
                 case 3:
                     partidaTerminada=true;
@@ -523,7 +561,6 @@ public class Pacman {
                 elementosRecogidos++;
                 tablero[posYPacman][posXPacman]=PACMAN;
             }
-
 
             //toca pared
             if (tablero[posYPacman][posXPacman].equals(PARED)) {
