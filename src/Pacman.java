@@ -39,14 +39,16 @@ public class Pacman {
     //Historial de partidas
     private static String registroGeneral= "";
 
-    /*
     //variables ansi de escape (para colores) -> no sirve en CMD
+    /*
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_YELLOW = "\u001B[33m";
     public static final String ANSI_BLUE = "\u001B[34m";
     public static final String ANSI_RESET = "\u001B[0m";
     */
+
+
     public static final String ANSI_RED = "";
     public static final String ANSI_GREEN = "";
     public static final String ANSI_YELLOW = "";
@@ -54,16 +56,51 @@ public class Pacman {
     public static final String ANSI_RESET = "";
 
     public static void main(String[] args) {
-        menuInicio();
+        menuInicio(null);
     }
 
-    private static void menuInicio(){
+    private static void menuInicio(String mensajeExtra){
         try{
+
+            System.out.println("\n\n\n");
+
+            System.out.println("Hecho por: Damian Pena -> Carnet 202110568");
+            System.out.println(" ______  _______    ______     __                              \n" +
+                    "/      |/       \\  /      \\  _/  |                             \n" +
+                    "$$$$$$/ $$$$$$$  |/$$$$$$  |/ $$ |                             \n" +
+                    "  $$ |  $$ |__$$ |$$ |  $$/ $$$$ |                             \n" +
+                    "  $$ |  $$    $$/ $$ |        $$ |                             \n" +
+                    "  $$ |  $$$$$$$/  $$ |   __   $$ |                             \n" +
+                    " _$$ |_ $$ |      $$ \\__/  | _$$ |_                            \n" +
+                    "/ $$   |$$ |      $$    $$/ / $$   |                           \n" +
+                    "$$$$$$/ $$/        $$$$$$/  $$$$$$/        ");
+
+            System.out.println("\n\n\n");
+             System.out.println("     ___         ___           ___           ___           ___           ___     \n" +
+                                "     /  /\\       /  /\\         /  /\\         /__/\\         /  /\\         /__/\\    \n" +
+                                "    /  /::\\     /  /::\\       /  /:/        |  |::\\       /  /::\\        \\  \\:\\   \n" +
+                                "   /  /:/\\:\\   /  /:/\\:\\     /  /:/         |  |:|:\\     /  /:/\\:\\        \\  \\:\\  \n" +
+                                "  /  /:/~/:/  /  /:/~/::\\   /  /:/  ___   __|__|:|\\:\\   /  /:/~/::\\   _____\\__\\:\\ \n" +
+                                " /__/:/ /:/  /__/:/ /:/\\:\\ /__/:/  /  /\\ /__/::::| \\:\\ /__/:/ /:/\\:\\ /__/::::::::\\\n" +
+                                " \\  \\:\\/:/   \\  \\:\\/:/__\\/ \\  \\:\\ /  /:/ \\  \\:\\~~\\__\\/ \\  \\:\\/:/__\\/ \\  \\:\\~~\\~~\\/\n" +
+                                "  \\  \\::/     \\  \\::/       \\  \\:\\  /:/   \\  \\:\\        \\  \\::/       \\  \\:\\  ~~~ \n" +
+                                "   \\  \\:\\      \\  \\:\\        \\  \\:\\/:/     \\  \\:\\        \\  \\:\\        \\  \\:\\     \n" +
+                                "    \\  \\:\\      \\  \\:\\        \\  \\::/       \\  \\:\\        \\  \\:\\        \\  \\:\\    \n" +
+                                "     \\__\\/       \\__\\/         \\__\\/         \\__\\/         \\__\\/         \\__\\/    \n" +
+                                "                                                                               ");
+
+
+            System.out.println("");
 
             System.out.println("=== Menu de inicio ===");
             System.out.println("1. Iniciar Juego");
             System.out.println("2. Historial de partidas");
             System.out.println("3. salir");
+
+            if (mensajeExtra != null) {
+                System.out.println("Juego Terminado");
+                System.out.println(mensajeExtra);
+            }
 
             switch (entrada.nextInt()){
                 case 1:
@@ -77,12 +114,12 @@ public class Pacman {
                     System.exit(0);
                 default:
                     System.out.println("Ingresa un valor valido");
-                    menuInicio();
+                    menuInicio(null);
             }
         }catch (InputMismatchException exception){
             System.out.println("Ingresa un valor valido");
             entrada.nextLine();
-            menuInicio();
+            menuInicio(null);
         }
     }
 
@@ -115,7 +152,7 @@ public class Pacman {
         }
 
         if (volverAlMenu) {
-            menuInicio();
+            menuInicio(null);
         }else{
             historialPartidas();
         }
@@ -377,11 +414,16 @@ public class Pacman {
             System.out.println("Columna: ");
             int posX = entrada.nextInt() -1;
 
-            //siempre que no haya nada en el donde se vaya a insertar a pacman
-            if (tablero[posY][posX] == null) {
-                tablero[posY][posX]=PACMAN;
-                posXPacman=posX;
-                posYPacman=posY;
+            if (posX<tablero[0].length && posY <tablero.length){
+                //siempre que no haya nada en el donde se vaya a insertar a pacman
+                if (tablero[posY][posX] == null) {
+                    tablero[posY][posX]=PACMAN;
+                    posXPacman=posX;
+                    posYPacman=posY;
+                }else{
+                    System.out.println("Posicion invalida");
+                    posicionIncial();
+                }
             }else{
                 System.out.println("Posicion invalida");
                 posicionIncial();
@@ -452,20 +494,33 @@ public class Pacman {
                 razon = "VICTORIA";
             }
 
+
             //Para guardar en el registro general
             String registroIndividual = nombreUsuario + " | " + puntaje + " | "+ razon + " | ";
 
-            System.out.println(registroIndividual);
-
             registroGeneral = registroIndividual + registroGeneral;
 
-            menuInicio();
+            menuInicio(registroIndividual);
+
+
         }
 
     }
 
     private static void menuPausa() {
         try {
+             System.out.println("      ___         ___           ___           ___           ___     \n" +
+                             "     /  /\\       /  /\\         /__/\\         /  /\\         /  /\\    \n" +
+                             "    /  /::\\     /  /::\\        \\  \\:\\       /  /:/_       /  /::\\   \n" +
+                             "   /  /:/\\:\\   /  /:/\\:\\        \\  \\:\\     /  /:/ /\\     /  /:/\\:\\  \n" +
+                             "  /  /:/~/:/  /  /:/~/::\\   ___  \\  \\:\\   /  /:/ /::\\   /  /:/~/::\\ \n" +
+                             " /__/:/ /:/  /__/:/ /:/\\:\\ /__/\\  \\__\\:\\ /__/:/ /:/\\:\\ /__/:/ /:/\\:\\\n" +
+                             " \\  \\:\\/:/   \\  \\:\\/:/__\\/ \\  \\:\\ /  /:/ \\  \\:\\/:/~/:/ \\  \\:\\/:/__\\/\n" +
+                             "  \\  \\::/     \\  \\::/       \\  \\:\\  /:/   \\  \\::/ /:/   \\  \\::/     \n" +
+                             "   \\  \\:\\      \\  \\:\\        \\  \\:\\/:/     \\__\\/ /:/     \\  \\:\\     \n" +
+                             "    \\  \\:\\      \\  \\:\\        \\  \\::/        /__/:/       \\  \\:\\    \n" +
+                             "     \\__\\/       \\__\\/         \\__\\/         \\__\\/         \\__\\/    ");
+            System.out.println("\n\n");
             System.out.println("=== Menu de Pausa ===");
             System.out.println("1. Regresar");
             System.out.println("3. Terminar partida");
@@ -492,7 +547,6 @@ public class Pacman {
     private static void imprimirMenuMovimiento(){
         System.out.println("| Arriba: 8 | Abajo: 5 | Derecha: 6 | Izquierda: 4 | Menu pausa: f |");
     }
-
 
     private static void mover(String tipoMovimiento){
 
