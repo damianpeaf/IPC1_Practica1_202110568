@@ -9,7 +9,6 @@ Compilado con java 17.0.1 2021-10-19 LTS
 
 ## Ejecución
 
-Descargar de: 
 ```sh
 java -jar Practica1.jar
 ```
