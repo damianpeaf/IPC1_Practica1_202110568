@@ -9,6 +9,8 @@ Compilado con java 17.0.1 2021-10-19 LTS
 
 ## Ejecución
 
+Descargar el .jar de [aqui](https://github.com/damianpeaf/-IPC1-Practica1_202110568/releases/tag/v1.0.0)
+
 ```sh
 java -jar Practica1.jar
 ```
